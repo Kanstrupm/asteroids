@@ -1,15 +1,10 @@
 import pygame
 import math
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
-from circleshape import CircleShape
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-
-        width = 60
-        heigth = 60
-        diagonal = math.ceil(math.sqrt(width**2 + heigth**2))
 
         self.position = pygame.Vector2(x, y)
         self.rotation = 0
