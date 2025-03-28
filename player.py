@@ -1,23 +1,39 @@
 import pygame
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED
+import math
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
 from circleshape import CircleShape
 
-class Player(CircleShape):
+class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        self.rotation = 0
-        super().__init__(x, y, PLAYER_RADIUS)
+        super().__init__()
 
-        # in the player class
+        width = 60
+        heigth = 60
+        diagonal = math.ceil(math.sqrt(width**2 + heigth**2))
+
+        self.position = pygame.Vector2(x, y)
+        self.rotation = 0
+        self.radius = PLAYER_RADIUS
+
+        surface_size = int(self.radius * 2.2)
+        self.image = pygame.Surface((surface_size, surface_size), pygame.SRCALPHA)
+        self.rect = self.image.get_rect(center=(x, y))
+
+        if hasattr(self.__class__, "containers"):
+            for group in self.__class__.containers:
+                group.add(self)
+
     def triangle(self):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
-        a = self.position + forward * self.radius
-        b = self.position - forward * self.radius - right
-        c = self.position - forward * self.radius + right
+        center = pygame.Vector2(self.image.get_width() // 2, self.image.get_height()// 2)
+        forward = pygame.Vector2(0, -1).rotate(self.rotation)
+        right = pygame.Vector2(1, 0).rotate(self.rotation) * self.radius / 1.5
+        a = center + forward * self.radius
+        b = center - forward * self.radius / 2 - right
+        c = center - forward * self.radius / 2 + right
+
         return [a, b, c]
     
-    def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), 2)
+
     
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -25,6 +41,21 @@ class Player(CircleShape):
     def update(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.rotate(dt)
-        if keys[pygame.K_d]:
             self.rotate(dt * -1)
+        if keys[pygame.K_d]:
+            self.rotate(dt)
+        if keys[pygame.K_w]:
+            self.move(dt)
+        if keys[pygame.K_s]:
+            self.move(dt * -1)
+
+        self.rect.center = self.position
+
+        self.image.fill((0, 0, 0, 0))
+        pygame.draw.polygon(self.image, "white", self.triangle(), 2)
+
+
+    def move(self, dt):
+        forward = pygame.Vector2(0, -1).rotate(self.rotation)
+        self.position += forward * PLAYER_SPEED * dt
+
