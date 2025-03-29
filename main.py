@@ -1,10 +1,8 @@
 import pygame
 from player import Player
 from constants import * 
-
-updatable = pygame.sprite.Group()
-drawable = pygame.sprite.Group()
-Player.containers = (updatable, drawable)
+from asteroidfield import AsteroidField
+from asteroid import Asteroid
 
 
 def main():
@@ -15,7 +13,19 @@ def main():
 
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    player = Player(SCREEN_WIDTH / 2, SCREEN_WIDTH / 2)   
+
+
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    Player.containers = (updatable, drawable)
+    Asteroid.containers = (asteroids, updatable, drawable)  
+
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2) 
+
+    AsteroidField.containers = (updatable,)
+    asteroid_field = AsteroidField()
 
     while True:
         for event in pygame.event.get():
@@ -27,7 +37,13 @@ def main():
         updatable.update(dt)
 
         screen.fill("black")
-        drawable.draw(screen)
+
+        try:
+            drawable.draw(screen)
+        except AttributeError:
+            for sprite in drawable:
+                if hasattr(sprite, "draw") and callable(sprite.draw):
+                    sprite.draw(screen)
         pygame.display.flip()
     
 
