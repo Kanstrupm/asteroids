@@ -1,6 +1,6 @@
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, SHOT_RADIUS
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, SHOT_RADIUS, PLAYER_SHOOT_COOLDOWN
 from bullets import Shot
 
 shots = pygame.sprite.Group()
@@ -12,6 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.position = pygame.Vector2(x, y)
         self.rotation = 0
         self.radius = PLAYER_RADIUS
+
+        self.shoot_timer = 0
 
         surface_size = int(self.radius * 2.2)
         self.image = pygame.Surface((surface_size, surface_size), pygame.SRCALPHA)
@@ -52,6 +54,8 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((0, 0, 0, 0))
         pygame.draw.polygon(self.image, "white", self.triangle(), 2)
 
+        self.shoot_timer -= dt
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.shoot()    
@@ -66,6 +70,8 @@ class Player(pygame.sprite.Sprite):
         return distance <= (self.radius + other_shape.radius)
     
     def shoot(self):
+        if self.shoot_timer > 0:
+            return
         new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
 
         direction = pygame.Vector2(0, -1)
@@ -74,4 +80,8 @@ class Player(pygame.sprite.Sprite):
 
         new_shot.velocity = direction * PLAYER_SHOOT_SPEED
 
+        self.shoot_timer = PLAYER_SHOOT_COOLDOWN
+
         shots.add(new_shot)
+
+
