@@ -3,9 +3,7 @@ from player import Player
 from constants import * 
 from asteroidfield import AsteroidField
 from asteroid import Asteroid
-from circleshape import CircleShape
 from bullets import Shot
-import math
 
 def main():        
     pygame.init()
@@ -24,7 +22,7 @@ def main():
 
 
     Player.containers = (updatable, drawable)
-    Asteroid.containers = (asteroids, updatable, drawable) 
+    Asteroid.containers = (asteroids, updatable, drawable)  
     Shot.containers = (shots, updatable, drawable) 
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shots) 
