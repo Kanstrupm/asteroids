@@ -5,8 +5,9 @@ from asteroidfield import AsteroidField
 from asteroid import Asteroid
 from circleshape import CircleShape
 from bullets import Shot
+import math
 
-def main():
+def main():        
     pygame.init()
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
@@ -19,16 +20,27 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
 
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable) 
-    Shot.containers = (updatable, drawable) 
+    Shot.containers = (shots, updatable, drawable) 
 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2) 
 
     AsteroidField.containers = (updatable,)
     asteroid_field = AsteroidField()
+
+    
+
+    def circles_collide(circle1, circle2):
+        distance = circle1.position.distance_to(circle2.position)
+        
+        return distance <= (circle1.radius + circle2.radius)
+
+
+
 
     while True:
         for event in pygame.event.get():
@@ -40,6 +52,12 @@ def main():
         updatable.update(dt)
 
         screen.fill("black")
+
+        for asteroid in asteroids:
+            for shot in shots:
+                if circles_collide(asteroid, shot):
+                    asteroid.kill()
+                    shot.kill()
 
         try:
             drawable.draw(screen)
