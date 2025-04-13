@@ -3,11 +3,10 @@ from circleshape import CircleShape
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, SHOT_RADIUS, PLAYER_SHOOT_COOLDOWN
 from bullets import Shot
 
-shots = pygame.sprite.Group()
-
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, shots_group):
         super().__init__()
+        self.shots = shots_group
 
         self.position = pygame.Vector2(x, y)
         self.rotation = 0
@@ -82,6 +81,6 @@ class Player(pygame.sprite.Sprite):
 
         self.shoot_timer = PLAYER_SHOOT_COOLDOWN
 
-        shots.add(new_shot)
+        self.shots.add(new_shot)
 
 
