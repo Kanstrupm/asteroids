@@ -3,6 +3,7 @@ from player import Player
 from constants import * 
 from asteroidfield import AsteroidField
 from asteroid import Asteroid
+from circleshape import CircleShape
 
 
 def main():
@@ -44,6 +45,12 @@ def main():
             for sprite in drawable:
                 if hasattr(sprite, "draw") and callable(sprite.draw):
                     sprite.draw(screen)
+        for asteroid in asteroids:
+            if player.collision(asteroid):
+                print("Game over!")
+                import sys
+                sys.exit()
+
         pygame.display.flip()
     
 

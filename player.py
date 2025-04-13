@@ -1,5 +1,5 @@
 import pygame
-import math
+from circleshape import CircleShape
 from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
 
 class Player(pygame.sprite.Sprite):
@@ -53,4 +53,8 @@ class Player(pygame.sprite.Sprite):
     def move(self, dt):
         forward = pygame.Vector2(0, -1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt
+
+    def collision(self, other_shape):
+        distance = self.position.distance_to(other_shape.position)
+        return distance <= (self.radius + other_shape.radius)
 
